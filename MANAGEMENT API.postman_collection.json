@@ -1,0 +1,186 @@
+{
+	"info": {
+		"_postman_id": "cf33267e-e111-4dee-807a-5cfd56dac0f9",
+		"name": "MANAGEMENT API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "39401715"
+	},
+	"item": [
+		{
+			"name": "POST /clientes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Carlos\",\r\n    \"lastName\": \"Martínez\",\r\n    \"dni\": \"12345678\",\r\n    \"email\": \"carlos.martinez@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8086/api/clientes"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /clientes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8086/api/clientes"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /clientes/{id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8086/api/clientes/1"
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /clientes/{id}",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Carlos Armando\",\r\n    \"lastName\": \"Martinez Cotrado\",\r\n    \"dni\": \"12345678\",\r\n    \"email\": \"carlos.martinez@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8086/api/clientes/1"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /clientes/{id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:8086/api/clientes/11"
+			},
+			"response": []
+		},
+		{
+			"name": "POST /cuentas",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"balance\": 321.56,\r\n    \"typeAccount\": \"ahorros\",\r\n    \"customerId\": 5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8087/api/cuentas"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /cuentas",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8087/api/cuentas"
+			},
+			"response": []
+		},
+		{
+			"name": "GET /cuentas/{id}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8087/api/cuentas/1"
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /cuentas/{Id}/depositar",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8087/api/cuentas/1/depositar?amount=100",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"api",
+						"cuentas",
+						"1",
+						"depositar"
+					],
+					"query": [
+						{
+							"key": "amount",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /cuentas/{id}/retirar",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8087/api/cuentas/2/retirar?amount=200",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8087",
+					"path": [
+						"api",
+						"cuentas",
+						"2",
+						"retirar"
+					],
+					"query": [
+						{
+							"key": "amount",
+							"value": "200"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /cuentas/{id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:8087/api/cuentas/11"
+			},
+			"response": []
+		}
+	]
+}
