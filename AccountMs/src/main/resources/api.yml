@@ -1,0 +1,302 @@
+openapi: 3.0.3
+info:
+  title: Accounts Microservice
+  description: |-
+    This microservice is designed to manage customer accounts. It allows the creation, listing, retrieval, and deletion of bank accounts, as well as performing deposits and withdrawals.
+
+    The main functionalities include:
+    - Create a new bank account for a customer.
+    - List all accounts
+    - Retrieve details of a specific bank account by its ID.
+    - Perform deposits into a customer's bank account.
+    - Perform withdrawals from a customer's bank account.
+    - Delete a customer's bank account.
+  version: 1.0.0
+servers:
+  - url: https://localhost:8086
+tags:
+  - name: account
+    description: Everything about accaunt
+
+paths:
+  /api/cuentas:
+    post:
+      tags:
+        - account
+      summary: Create a new account for a customer
+      description: Create a new account for a customer, using the provided customerId
+      operationId: createAccount
+      requestBody:
+        description: The data required to create a new account for the customer
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Account"
+        required: true
+      responses:
+        "201":
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "422":
+          description: Validation exception, customerId not valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelApiResponse"
+              examples:
+                customerNotExists:
+                  summary: Customer not exists
+                  value:
+                    code: "422"
+                    message: "Customer not exists"
+                    details:
+                      field: "customerid"
+                      issue: "customer_not_exists"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelApiResponse"
+    get:
+      tags:
+        - account
+      summary: List all accounts
+      description: Retrieve a list of all accounts
+      operationId: getAllAccounts
+      responses:
+        "200":
+          description: Successfully retrieved list of accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+        "404":
+          description: Accounts not found.
+        "500":
+          description: Internal server error.
+  /api/cuentas/{id}:
+    get:
+      tags:
+        - account
+      summary: Retrieve account details by id
+      description: Retrieve account details by id
+      operationId: getAccountId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "404":
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelApiResponse"
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelApiResponse"
+    delete:
+      tags:
+        - account
+      summary: Delete account by id
+      description: Delete a customer's bank account.
+      operationId: deleteAccountId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Account successfully deleted
+        "404":
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelApiResponse"
+
+  /api/cuentas/{id}/deposit:
+    put:
+      tags:
+        - account
+      summary: Make a deposit into an account
+      description: Deposit a specified amount into the account identified by the provided ID.
+      operationId: deposit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: The amount to deposit into the account.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  format: float
+                  example: 100.0
+                  minimum: 0.0
+                  description: "Amount must be a positive number greater than zero."
+        required: true
+      responses:
+        "200":
+          description: Successful deposit operation. The account balance has been updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "404":
+          description: "The account ID does not exist or is invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelApiResponse"
+        "400":
+          description: "Bad request due to invalid data."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelApiResponse"
+              examples:
+                invalidAmount:
+                  summary: Invalid deposit amount
+                  value:
+                    code: "400"
+                    message: "Invalid deposit amount. Amount must be positive."
+                    details:
+                      field: "amount"
+                      issue: "invalid_amount"
+
+  /api/cuentas/{id}/withdrawal:
+    put:
+      tags:
+        - account
+      summary: Make a withdrawal from an account
+      description: Make a withdrawal from an account
+      operationId: withdraw
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Amount to withdraw
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  format: float
+                  example: 100.0
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "400":
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelApiResponse"
+              examples:
+                savingsAccountAndResultIsThanLessZero:
+                  summary: "If it is savings account and result is lesser than zero"
+                  value:
+                    code: "422"
+                    message: "Withdrawals that result in a negative balance are not allowed for savings accounts"
+                    details:
+                      field: "amount"
+                      issue: "withdrawal_exceeds_balance"
+                checkingAccountAndResultIsThanLessMinus500:
+                  summary: "If it is checking account and result is lesser than minus 500"
+                  value:
+                    code: "422"
+                    message: "Withdrawals exceeding minus 500 below the balance are not allowed for checking account (overdrafts are permitted)."
+                    details:
+                      field: "amount"
+                      issue: "balance_less_than_allowed"
+        "404":
+          description: "The account ID does not exist or is invalid."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelApiResponse"
+
+components:
+  schemas:
+    Account:
+      required:
+        - typeAccount
+        - customerId
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+          description: Unique identifier for an account.
+          readOnly: true
+        accountNumber:
+          type: string
+          example: accountnumber
+          description: Automatically generated, must be unique.
+          readOnly: true
+        balance:
+          type: number
+          format: float
+          example: 100.0
+        typeAccount:
+          type: string
+          enum:
+            - savings
+            - checking
+        customerId:
+          type: string
+          example: customerid
+      xml:
+        name: order
+    ModelApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: "##default"
